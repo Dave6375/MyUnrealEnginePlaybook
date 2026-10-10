@@ -1,34 +1,30 @@
-﻿# Unreal Engine Professional .gitignore
+﻿# Unreal Engine generated files
+/Binaries/
+/DerivedDataCache/
+/Intermediate/
+/Saved/
 
-# Binaries and intermediate files
-Binaries/
-Build/
-DerivedDataCache/
-Intermediate/
-Saved/
-Script/
+# Build output (keep source files)
+ /Build/**
+!/Build/**/
+!/Build/**/*.h
+!/Build/**/*.cpp
+!/Build/**/*.cs
 
-# Plugin binaries and intermediate
-Plugins/*/Binaries/
-Plugins/*/Intermediate/
-
-# IDE files
+# Visual Studio
 .vs/
 *.sln
-*.suo
-*.user
-*.userosscache
-*.sln.doccache
-*.opendb
-*.db
 *.pdb
+*.user
+*.suo
 
-# System files
-.DS_Store
-Thumbs.db
+# Plugin-generated files
+/Plugins/*/Intermediate/
+/Plugins/*/Binaries/
 
-# Keep these
-!Source/
-!Config/
-!*.uproject
-!README.md
+# Keep project source, settings, and descriptor
+!/Source/
+!/Source/**
+!/Config/
+!/Config/**
+!/*.uproject
