@@ -1,0 +1,34 @@
+﻿# Unreal Engine Professional .gitignore
+
+# Binaries and intermediate files
+Binaries/
+Build/
+DerivedDataCache/
+Intermediate/
+Saved/
+Script/
+
+# Plugin binaries and intermediate
+Plugins/*/Binaries/
+Plugins/*/Intermediate/
+
+# IDE files
+.vs/
+*.sln
+*.suo
+*.user
+*.userosscache
+*.sln.doccache
+*.opendb
+*.db
+*.pdb
+
+# System files
+.DS_Store
+Thumbs.db
+
+# Keep these
+!Source/
+!Config/
+!*.uproject
+!README.md
