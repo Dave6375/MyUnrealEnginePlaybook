@@ -8,7 +8,21 @@ public class Game : ModuleRules
 	{
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 	
-		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "GameplayAbilities", "GameplayTasks", "GameplayTags", "AIModule", "StateTreeModule", "GameplayStateTreeModule" });
+		PublicDependencyModuleNames.AddRange(new string[]
+		{
+			"Core", 
+			"CoreUObject", 
+			"Engine", 
+			"InputCore", 
+			"GameplayAbilities", 
+			"GameplayTasks", 
+			"GameplayTags", 
+			"AIModule", 
+			"StateTreeModule", 
+			"GameplayStateTreeModule",
+			"EnhancedInput",
+			"ModularGameplay"
+		});
 
 		PrivateDependencyModuleNames.AddRange(new string[] {  });
 

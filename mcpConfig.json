@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "ludus-mcp": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-remote@latest",
+        "https://mcp.ludusengine.com/mcp"
+      ]
+    }
+  }
+}
