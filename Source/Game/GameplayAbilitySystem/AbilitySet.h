@@ -6,12 +6,15 @@
 #include "AbilitySystemComponent.h"
 #include "AbilitySet.generated.h"
 
-{
-public:
-	
-};
+class UGameplayEffect;
+class UAttributeSet;
+class UMyAbilitySystemComponent;
+class UGameplayAbility;
+class UObject;
+
+
 /**
- * AbilitySet_GameplayAbility
+ * FGameAbilitySet_GameplayAbility
  * Data used by the ability set to grant gameplay abilities
  */
 USTRUCT(BlueprintType)
@@ -31,7 +34,6 @@ public:
 	// Tag used to process input for the ability.
 	UPROPERTY(EditDefaultsOnly, Meta = (Categories = "InputTag"))
 	FGameplayTag InputTag;
-	
 };
 
 
@@ -66,44 +68,70 @@ struct FGameAbilitySet_AttributeSet
 	GENERATED_BODY()
 	
 public:
-	// Gameplay effect to grant.
+	// Attribute set to grant.
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<UAttributeSet> AttributeSet;
 };
 
 
 /**
-* FGameplayAbilitySet_GrantedHandles
-* Data used to store handles to what has been granted by the ability set.
-*/
+ * FGameAbilitySet_GrantedHandles
+ * Data used to store handles to what has been granted by the ability set.
+ */
 USTRUCT(BlueprintType)
 struct FGameAbilitySet_GrantedHandles
 {
 	GENERATED_BODY()
 	
 public:
-	void AddAbilitySpectHandle(const FGameplayAbilitySpecHandle& Handle);
+	void AddAbilitySpecHandle(const FGameplayAbilitySpecHandle& Handle);
 	void AddGameplayEffectHandle(const FActiveGameplayEffectHandle& Handle);
-	void AddAttributeSet(UAttributeSet* Set)
-	void TakeFromAbilitySystem(UGameAbilitySystemComponent* GameASC);
+	void AddAttributeSet(UAttributeSet* Set);
+	void TakeFromAbilitySystem(UMyAbilitySystemComponent* GameASC);
+
+protected:
+	// Handles to granted abilities.
+	UPROPERTY()
+	TArray<FGameplayAbilitySpecHandle> AbilitySpecHandles;
+	
+	// Handles to the granted gameplay effects.
+	UPROPERTY()
+	TArray<FActiveGameplayEffectHandle> GameplayEffectHandles;
+	
+	// Pointers to the granted attribute sets
+	UPROPERTY()
+	TArray<TObjectPtr<UAttributeSet>> GrantedAttributeSets;
 };
 
 
-UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
-class GAME_API UAbilitySet : public UAbilitySystemComponent
+/**
+ * UAbilitySet
+ * 
+ * Non-mutable data asset used to grant gameplay abilities and gameplay effect
+ */
+UCLASS(BlueprintType, Const)
+class GAME_API UAbilitySet : public UPrimaryDataAsset
 {
 	GENERATED_BODY()
-
+	
 public:
-	// Sets default values for this component's properties
-	UAbilitySet();
-
+	UAbilitySet(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
+	
+	/**
+	 * Grants the ability set to the specified ability system component.
+	 * The returned handles can be used later to take away anything that was granted.
+	 */
+	void GiveToAbilitySystem(UMyAbilitySystemComponent* GameASC, FGameAbilitySet_GrantedHandles* OutGrantedHandles, UObject* SourceObject = nullptr) const;
+	
 protected:
-	// Called when the game starts
-	virtual void BeginPlay() override;
-
-public:
-	// Called every frame
-	virtual void TickComponent(float DeltaTime, ELevelTick TickType,
-	                           FActorComponentTickFunction* ThisTickFunction) override;
+	// Gameplay abilities to grant when this ability set is granted.
+	UPROPERTY(EditDefaultsOnly, Category="Gameplay Abilities", meta=(TitleProperty=Ability)) 
+	TArray<FGameAbilitySet_GameplayAbility> GrantedGameplayAbilities;
+	
+	// Gameplay effects to grant when this ability set is granted
+	UPROPERTY(EditDefaultsOnly, Category="Gameplay Effects", meta=(TitleProperty=GameplayEffect))
+	TArray<FGameAbilitySet_GameplayEffect> GrantedGameplayEffects;
+	
+	UPROPERTY(EditDefaultsOnly, Category="Attribute Sets", meta=(TitleProperty=AttributeSet)) 
+	TArray<FGameAbilitySet_AttributeSet> GrantedAttributes;
 };

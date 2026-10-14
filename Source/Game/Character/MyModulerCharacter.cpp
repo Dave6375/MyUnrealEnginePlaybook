@@ -1,32 +1,73 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-
 #include "MyModulerCharacter.h"
+#include "MyPawnExtensionComponent.h"
+#include "Game/GameplayAbilitySystem/MyAbilitySystemComponent.h"
+#include "Game/Player/MyModularPlayerState.h"
 
+#include UE_INLINE_GENERATED_CPP_BY_NAME(MyModulerCharacter)
 
-// Sets default values
-AMyModulerCharacter::AMyModulerCharacter(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
+AMyModulerCharacter::AMyModulerCharacter(const FObjectInitializer& ObjectInitializer)
+	: Super(ObjectInitializer)
 {
-	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
+	PrimaryActorTick.bCanEverTick = false;
+	PrimaryActorTick.bStartWithTickEnabled = false;
+
+	PawnExtComponent = CreateDefaultSubobject<UMyPawnExtensionComponent>(TEXT("PawnExtensionComponent"));
 }
 
-// Called when the game starts or when spawned
-void AMyModulerCharacter::BeginPlay()
+UAbilitySystemComponent* AMyModulerCharacter::GetAbilitySystemComponent() const
 {
-	Super::BeginPlay();
-	
+	return PawnExtComponent ? PawnExtComponent->GetMyAbilitySystemComponent() : nullptr;
 }
 
-// Called every frame
-void AMyModulerCharacter::Tick(float DeltaTime)
+UMyAbilitySystemComponent* AMyModulerCharacter::GetMyAbilitySystemComponent() const
 {
-	Super::Tick(DeltaTime);
+	return PawnExtComponent ? PawnExtComponent->GetMyAbilitySystemComponent() : nullptr;
 }
 
-// Called to bind functionality to input
+void AMyModulerCharacter::PossessedBy(AController* NewController)
+{
+	Super::PossessedBy(NewController);
+
+	PawnExtComponent->HandleControllerChanged();
+
+	if (AMyModularPlayerState* PS = GetPlayerState<AMyModularPlayerState>())
+	{
+		PawnExtComponent->InitializeAbilitySystem(PS->GetMyAbilitySystemComponent(), PS);
+	}
+}
+
+void AMyModulerCharacter::UnPossessed()
+{
+	Super::UnPossessed();
+
+	PawnExtComponent->HandleControllerChanged();
+}
+
+void AMyModulerCharacter::OnRep_Controller()
+{
+	Super::OnRep_Controller();
+
+	PawnExtComponent->HandleControllerChanged();
+}
+
+void AMyModulerCharacter::OnRep_PlayerState()
+{
+	Super::OnRep_PlayerState();
+
+	PawnExtComponent->HandlePlayerStateReplicated();
+
+	if (AMyModularPlayerState* PS = GetPlayerState<AMyModularPlayerState>())
+	{
+		PawnExtComponent->InitializeAbilitySystem(PS->GetMyAbilitySystemComponent(), PS);
+	}
+}
+
 void AMyModulerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
+
+	PawnExtComponent->SetupPlayerInputComponent();
 }
 

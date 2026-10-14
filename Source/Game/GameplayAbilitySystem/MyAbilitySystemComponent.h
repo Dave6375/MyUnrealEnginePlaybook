@@ -6,49 +6,54 @@
 #include "AbilitySystemComponent.h"
 #include "Abilities/GameplayAbility.h"
 #include "NativeGameplayTags.h"
+#include "MyGameplayAbility.h"
 #include "MyAbilitySystemComponent.generated.h"
-
 
 class AActor;
 class UGameplayAbility;
-class UGameplayAbilityTagRelationshipMapping;
+class UMyAbilityTagRelationshipMapping;
 class UObject;
 struct FFrame;
 struct FGameplayAbilityTargetDataHandle;
 
-
 /**
- * GameAbilitySystemComponent
+ * UMyAbilitySystemComponent
  * Base ability system component class used by this project.
  */
-UCLASS(MinimalAPI)
+UCLASS()
 class GAME_API UMyAbilitySystemComponent : public UAbilitySystemComponent
 {
 	GENERATED_BODY()
 
 public:
-	GAME_API UMyAbilitySystemComponent(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
+	UMyAbilitySystemComponent(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
 	
 	//~UActorComponent interface
-	GAME_API virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 	//~End of UActorComponent interface
 	
-	GAME_API virtual void InitAbilityActorInfo(AActor* InOwnerActor, AActor* InAvatarActor) override;
+	virtual void InitAbilityActorInfo(AActor* InOwnerActor, AActor* InAvatarActor) override;
 	
 	typedef TFunctionRef<bool(const UGameplayAbility* GameAbility, FGameplayAbilitySpecHandle Handle)> TShouldCancelAbilityFunc;
-	GAME_API void CancelAbilitiesByFunc(TShouldCancelAbilityFunc ShouldCancelFunc, bool bReplicateCancelAbility);
+	void CancelAbilitiesByFunc(TShouldCancelAbilityFunc ShouldCancelFunc, bool bReplicateCancelAbility);
 	
-	GAME_API void CancelInputActivatedAbilities(bool bReplicateCancelAbility);
-	GAME_API void AbilityInputTagPressed(const FGameplayTag& InputTag);
-	GAME_API void AbilityInputTagReleased(const FGameplayTag& InputTag);
+	void CancelInputActivatedAbilities(bool bReplicateCancelAbility);
+	void AbilityInputTagPressed(const FGameplayTag& InputTag);
+	void AbilityInputTagReleased(const FGameplayTag& InputTag);
 	
-	GAME_API void ProcessAbilityInput(float DeltaTime, bool bGamePaused);
-	GAME_API void ClearAbilityInput();
+	void ProcessAbilityInput(float DeltaTime, bool bGamePaused);
+	void ClearAbilityInput();
+	
+	// Activation Groups
+	bool IsActivationGroupBlocked(EMyAbilityActivationGroup Group) const;
+	void AddAbilityToActivationGroup(EMyAbilityActivationGroup Group, UMyGameplayAbility* Ability);
+	void RemoveAbilityFromActivationGroup(EMyAbilityActivationGroup Group, UMyGameplayAbility* Ability);
+	void CancelActivationGroupAbilities(EMyAbilityActivationGroup Group, UMyGameplayAbility* IgnoreAbility, bool bReplicateCancelAbility);
 
-// Dynamic Tag Effect Helpers (granting temporary runtime tags via effects)
+	// Dynamic Tag Effect Helpers (granting temporary runtime tags via effects)
 	void AddDynamicTagGameplayEffect(const FGameplayTag& Tag);
 	void RemoveDynamicTagGameplayEffect(const FGameplayTag& Tag);
-
+	
 	// Target Data Helper
 	void GetAbilityTargetData(const FGameplayAbilitySpecHandle AbilityHandle, FGameplayAbilityActivationInfo ActivationInfo, FGameplayAbilityTargetDataHandle& OutTargetDataHandle);
 
