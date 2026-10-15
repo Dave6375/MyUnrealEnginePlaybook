@@ -2,6 +2,9 @@
 
 #include "MyModulerCharacter.h"
 #include "MyPawnExtensionComponent.h"
+#include "MyHeroComponent.h"
+#include "UPawnData.h"
+#include "GameFramework/CharacterMovementComponent.h"
 #include "Game/GameplayAbilitySystem/MyAbilitySystemComponent.h"
 #include "Game/Player/MyModularPlayerState.h"
 
@@ -12,6 +15,17 @@ AMyModulerCharacter::AMyModulerCharacter(const FObjectInitializer& ObjectInitial
 {
 	PrimaryActorTick.bCanEverTick = false;
 	PrimaryActorTick.bStartWithTickEnabled = false;
+
+	bUseControllerRotationPitch = false;
+	bUseControllerRotationYaw = false;
+	bUseControllerRotationRoll = false;
+
+	if (UCharacterMovementComponent* CharMovement = GetCharacterMovement())
+	{
+		CharMovement->bOrientRotationToMovement = true;
+		CharMovement->bUseControllerDesiredRotation = false;
+		CharMovement->RotationRate = FRotator(0.0f, 720.0f, 0.0f);
+	}
 
 	PawnExtComponent = CreateDefaultSubobject<UMyPawnExtensionComponent>(TEXT("PawnExtensionComponent"));
 }
@@ -31,6 +45,11 @@ void AMyModulerCharacter::PossessedBy(AController* NewController)
 	Super::PossessedBy(NewController);
 
 	PawnExtComponent->HandleControllerChanged();
+
+	if (PawnData && HasAuthority() && PawnExtComponent->GetPawnData<UUPawnData>() == nullptr)
+	{
+		PawnExtComponent->SetPawnData(PawnData);
+	}
 
 	if (AMyModularPlayerState* PS = GetPlayerState<AMyModularPlayerState>())
 	{
@@ -69,5 +88,10 @@ void AMyModulerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInput
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
 	PawnExtComponent->SetupPlayerInputComponent();
+
+	if (UMyHeroComponent* HeroComp = UMyHeroComponent::FindHeroComponent(this))
+	{
+		HeroComp->InitializePlayerInput(PlayerInputComponent);
+	}
 }
 

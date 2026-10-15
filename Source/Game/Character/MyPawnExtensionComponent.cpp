@@ -119,9 +119,7 @@ void UMyPawnExtensionComponent::InitializeAbilitySystem(UMyAbilitySystemComponen
 
 	if (ExistingAvatar != nullptr && ExistingAvatar != Pawn)
 	{
-		// Detach previous avatar if lag caused a new pawn to possess before cleanup
-		ensure(!ExistingAvatar->HasAuthority());
-
+		// Detach previous avatar if lag or fast respawn caused possession before cleanup
 		if (UMyPawnExtensionComponent* OtherExtension = GetPawnExtensionComponent(ExistingAvatar))
 		{
 			OtherExtension->UninitializeAbilitySystem();

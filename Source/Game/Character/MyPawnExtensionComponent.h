@@ -24,7 +24,7 @@ struct FGameplayTag;
  *
  * Component that coordinates modular initialization and ability system setup across Pawn components.
  */
-UCLASS()
+UCLASS(Blueprintable, meta = (BlueprintSpawnableComponent))
 class GAME_API UMyPawnExtensionComponent : public UPawnComponent, public IGameFrameworkInitStateInterface
 {
 	GENERATED_BODY()
@@ -101,7 +101,7 @@ protected:
 	FSimpleMulticastDelegate OnAbilitySystemUninitialized;
 
 	/** Pawn data used to configure the pawn */
-	UPROPERTY(EditInstanceOnly, ReplicatedUsing = OnRep_PawnData, Category = "Pawn")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, ReplicatedUsing = OnRep_PawnData, Category = "Pawn")
 	TObjectPtr<const UUPawnData> PawnData;
 
 	/** Cached pointer to ability system component */

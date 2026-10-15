@@ -10,6 +10,7 @@
 class UMyPawnExtensionComponent;
 class UMyAbilitySystemComponent;
 class UAbilitySystemComponent;
+class UUPawnData;
 
 UCLASS()
 class GAME_API AMyModulerCharacter : public ACharacter, public IAbilitySystemInterface
@@ -32,6 +33,11 @@ protected:
 	virtual void OnRep_PlayerState() override;
 
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
+protected:
+	/** Default Pawn Data for this character */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Character")
+	TObjectPtr<const UUPawnData> PawnData;
 
 private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Character", meta = (AllowPrivateAccess = "true"))
