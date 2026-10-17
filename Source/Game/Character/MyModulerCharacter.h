@@ -9,6 +9,7 @@
 
 class UMyPawnExtensionComponent;
 class UMyAbilitySystemComponent;
+class UMyEquipmentManagerComponent;
 class UAbilitySystemComponent;
 class UUPawnData;
 
@@ -42,4 +43,7 @@ protected:
 private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Character", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UMyPawnExtensionComponent> PawnExtComponent;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Equipment", meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<UMyEquipmentManagerComponent> EquipmentManagerComponent;
 };

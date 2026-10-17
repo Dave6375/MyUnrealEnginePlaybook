@@ -5,6 +5,7 @@
 #include "MyHeroComponent.h"
 #include "UPawnData.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Game/Equipment/MyEquipmentManagerComponent.h"
 #include "Game/GameplayAbilitySystem/MyAbilitySystemComponent.h"
 #include "Game/Player/MyModularPlayerState.h"
 
@@ -28,6 +29,7 @@ AMyModulerCharacter::AMyModulerCharacter(const FObjectInitializer& ObjectInitial
 	}
 
 	PawnExtComponent = CreateDefaultSubobject<UMyPawnExtensionComponent>(TEXT("PawnExtensionComponent"));
+	EquipmentManagerComponent = CreateDefaultSubobject<UMyEquipmentManagerComponent>(TEXT("EquipmentManagerComponent"));
 }
 
 UAbilitySystemComponent* AMyModulerCharacter::GetAbilitySystemComponent() const
