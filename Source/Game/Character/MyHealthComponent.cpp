@@ -154,10 +154,14 @@ void UMyHealthComponent::InitializeWithAbilitySystem(UMyAbilitySystemComponent* 
 	// Register change delegates
 	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(UBasicAttributeSet::GetHealthAttribute()).AddUObject(this, &ThisClass::HandleHealthChanged);
 	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(UBasicAttributeSet::GetMaxHealthAttribute()).AddUObject(this, &ThisClass::HandleMaxHealthChanged);
+	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(UBasicAttributeSet::GetShieldAttribute()).AddUObject(this, &ThisClass::HandleShieldChanged);
+	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(UBasicAttributeSet::GetMaxShieldAttribute()).AddUObject(this, &ThisClass::HandleMaxShieldChanged);
 
 	// Broadcast initial values
 	OnHealthChanged.Broadcast(this, HealthSet->GetHealth(), HealthSet->GetHealth(), nullptr);
 	OnMaxHealthChanged.Broadcast(this, HealthSet->GetMaxHealth(), HealthSet->GetMaxHealth(), nullptr);
+	OnShieldChanged.Broadcast(this, HealthSet->GetShield(), HealthSet->GetShield(), nullptr);
+	OnMaxShieldChanged.Broadcast(this, HealthSet->GetMaxShield(), HealthSet->GetMaxShield(), nullptr);
 }
 
 void UMyHealthComponent::UninitializeFromAbilitySystem()
@@ -166,6 +170,8 @@ void UMyHealthComponent::UninitializeFromAbilitySystem()
 	{
 		AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(UBasicAttributeSet::GetHealthAttribute()).RemoveAll(this);
 		AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(UBasicAttributeSet::GetMaxHealthAttribute()).RemoveAll(this);
+		AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(UBasicAttributeSet::GetShieldAttribute()).RemoveAll(this);
+		AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(UBasicAttributeSet::GetMaxShieldAttribute()).RemoveAll(this);
 	}
 
 	AbilitySystemComponent = nullptr;
@@ -193,6 +199,27 @@ float UMyHealthComponent::GetHealthNormalized() const
 	return 0.0f;
 }
 
+float UMyHealthComponent::GetShield() const
+{
+	return HealthSet ? HealthSet->GetShield() : 0.0f;
+}
+
+float UMyHealthComponent::GetMaxShield() const
+{
+	return HealthSet ? HealthSet->GetMaxShield() : 0.0f;
+}
+
+float UMyHealthComponent::GetShieldNormalized() const
+{
+	if (HealthSet)
+	{
+		const float Shield = HealthSet->GetShield();
+		const float MaxShield = HealthSet->GetMaxShield();
+		return (MaxShield > 0.0f) ? (Shield / MaxShield) : 0.0f;
+	}
+	return 0.0f;
+}
+
 void UMyHealthComponent::HandleHealthChanged(const FOnAttributeChangeData& ChangeData)
 {
 	OnHealthChanged.Broadcast(this, ChangeData.OldValue, ChangeData.NewValue, nullptr);
@@ -206,6 +233,16 @@ void UMyHealthComponent::HandleHealthChanged(const FOnAttributeChangeData& Chang
 void UMyHealthComponent::HandleMaxHealthChanged(const FOnAttributeChangeData& ChangeData)
 {
 	OnMaxHealthChanged.Broadcast(this, ChangeData.OldValue, ChangeData.NewValue, nullptr);
+}
+
+void UMyHealthComponent::HandleShieldChanged(const FOnAttributeChangeData& ChangeData)
+{
+	OnShieldChanged.Broadcast(this, ChangeData.OldValue, ChangeData.NewValue, nullptr);
+}
+
+void UMyHealthComponent::HandleMaxShieldChanged(const FOnAttributeChangeData& ChangeData)
+{
+	OnMaxShieldChanged.Broadcast(this, ChangeData.OldValue, ChangeData.NewValue, nullptr);
 }
 
 void UMyHealthComponent::HandleOutOfHealth(AActor* DamageInstigator, AActor* DamageCauser, const FGameplayEffectSpec* DamageEffectSpec, float DamageMagnitude, float OldValue, float NewValue)

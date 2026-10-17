@@ -63,6 +63,18 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Health")
 	float GetHealthNormalized() const;
 
+	/** Returns the current shield value. */
+	UFUNCTION(BlueprintCallable, Category = "Health")
+	float GetShield() const;
+
+	/** Returns the current maximum shield value. */
+	UFUNCTION(BlueprintCallable, Category = "Health")
+	float GetMaxShield() const;
+
+	/** Returns the current shield in the range [0.0, 1.0]. */
+	UFUNCTION(BlueprintCallable, Category = "Health")
+	float GetShieldNormalized() const;
+
 	UFUNCTION(BlueprintCallable, Category = "Health")
 	EMyDeathState GetDeathState() const { return DeathState; }
 
@@ -85,6 +97,14 @@ public:
 	/** Delegate fired when the max health value has changed. */
 	UPROPERTY(BlueprintAssignable, Category = "Health")
 	FMyHealth_AttributeChanged OnMaxHealthChanged;
+
+	/** Delegate fired when the shield value has changed. */
+	UPROPERTY(BlueprintAssignable, Category = "Health")
+	FMyHealth_AttributeChanged OnShieldChanged;
+
+	/** Delegate fired when the max shield value has changed. */
+	UPROPERTY(BlueprintAssignable, Category = "Health")
+	FMyHealth_AttributeChanged OnMaxShieldChanged;
 
 	/** Delegate fired when the death sequence has started. */
 	UPROPERTY(BlueprintAssignable, Category = "Health")
@@ -111,6 +131,8 @@ protected:
 
 	virtual void HandleHealthChanged(const struct FOnAttributeChangeData& ChangeData);
 	virtual void HandleMaxHealthChanged(const struct FOnAttributeChangeData& ChangeData);
+	virtual void HandleShieldChanged(const struct FOnAttributeChangeData& ChangeData);
+	virtual void HandleMaxShieldChanged(const struct FOnAttributeChangeData& ChangeData);
 	virtual void HandleOutOfHealth(AActor* DamageInstigator, AActor* DamageCauser, const FGameplayEffectSpec* DamageEffectSpec, float DamageMagnitude, float OldValue, float NewValue);
 
 protected:
